@@ -1,0 +1,19 @@
+{
+  "name": "shipper-runtime-browser",
+  "version": "0.0.0",
+  "authors": [
+    "Fabian Cook <fabian.cook@joukou.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "q": "1.0.1",
+    "lodash": "~2.4.1"
+  }
+}
