@@ -1,19 +1,26 @@
 {
   "name": "shipper-runtime-browser",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "authors": [
     "Fabian Cook <fabian.cook@joukou.com>"
   ],
-  "license": "MIT",
+  "main": "dist/bundle.js",
+  "license": "Apache 2.0",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "gulpfile.js",
+    "inject.json",
+    "package.json",
+    "src",
+    "dist/build"
   ],
-  "dependencies": {
+  "devDependencies": {
     "q": "1.0.1",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "validator-js": "~3.27.0"
   }
 }
