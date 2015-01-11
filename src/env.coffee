@@ -11,6 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 class ShipperEnvironmentObject
+
+  deferCallback: null
+
   setProtocolDefinition: ( @protocolDefinition ) ->
 
   getProtocolDefinition: ->
@@ -27,5 +30,14 @@ class ShipperEnvironmentObject
       protocol: 'shipper'
       timeout: 10000
     }
+
+  setDefer: ( @deferCallback ) ->
+
+  defer: ->
+    unless @deferCallback instanceof Function
+      unless Q?.defer instanceof Function
+        return
+      return Q.defer( )
+    return @deferCallback( )
 
 window.ShipperEnvironment = new ShipperEnvironmentObject( )

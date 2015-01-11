@@ -137,7 +137,7 @@ limitations under the License.
           if (possiblePromise.progress instanceof Function) {
             return possiblePromise;
           }
-          deferred = Q.defer();
+          deferred = ShipperEnvironment.defer();
           possiblePromise.then(deferred.resolve).fail(deferred.reject);
           if (possiblePromise.progress instanceof Function) {
             possiblePromise.progress(deferred.notify);

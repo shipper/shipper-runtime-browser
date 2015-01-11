@@ -125,7 +125,7 @@ defineShipperCommand = ( protocol, name, definition ) ->
       )
         unless possiblePromise.progress not instanceof Function
           return possiblePromise
-        deferred = Q.defer()
+        deferred = ShipperEnvironment.defer()
         possiblePromise
         .then(
           deferred.resolve

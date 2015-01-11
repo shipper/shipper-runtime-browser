@@ -18,6 +18,8 @@ limitations under the License.
   ShipperEnvironmentObject = (function() {
     function ShipperEnvironmentObject() {}
 
+    ShipperEnvironmentObject.prototype.deferCallback = null;
+
     ShipperEnvironmentObject.prototype.setProtocolDefinition = function(protocolDefinition) {
       this.protocolDefinition = protocolDefinition;
     };
@@ -40,6 +42,20 @@ limitations under the License.
         protocol: 'shipper',
         timeout: 10000
       };
+    };
+
+    ShipperEnvironmentObject.prototype.setDefer = function(deferCallback) {
+      this.deferCallback = deferCallback;
+    };
+
+    ShipperEnvironmentObject.prototype.defer = function() {
+      if (!(this.deferCallback instanceof Function)) {
+        if (!((typeof Q !== "undefined" && Q !== null ? Q.defer : void 0) instanceof Function)) {
+          return;
+        }
+        return Q.defer();
+      }
+      return this.deferCallback();
     };
 
     return ShipperEnvironmentObject;

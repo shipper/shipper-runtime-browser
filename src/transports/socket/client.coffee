@@ -14,7 +14,7 @@ class SocketClient
   constructor: ->
     @requests = { }
     @parameters = ShipperEnvironment.getWebSocketParameters( )
-    @deferred = Q.defer()
+    @deferred = ShipperEnvironment.defer()
     @promise = @deferred.promise
     try
       @socket = new WebSocket(
@@ -67,7 +67,7 @@ class SocketClient
 
 
   sendRequest: ( module, protocol, command, payload ) ->
-    deferred = Q.defer()
+    deferred = ShipperEnvironment.defer()
     req = new SocketRequest(
       module,
       protocol,

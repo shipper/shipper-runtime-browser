@@ -460,6 +460,8 @@ limitations under the License.
   ShipperEnvironmentObject = (function() {
     function ShipperEnvironmentObject() {}
 
+    ShipperEnvironmentObject.prototype.deferCallback = null;
+
     ShipperEnvironmentObject.prototype.setProtocolDefinition = function(protocolDefinition) {
       this.protocolDefinition = protocolDefinition;
     };
@@ -482,6 +484,20 @@ limitations under the License.
         protocol: 'shipper',
         timeout: 10000
       };
+    };
+
+    ShipperEnvironmentObject.prototype.setDefer = function(deferCallback) {
+      this.deferCallback = deferCallback;
+    };
+
+    ShipperEnvironmentObject.prototype.defer = function() {
+      if (!(this.deferCallback instanceof Function)) {
+        if (!((typeof Q !== "undefined" && Q !== null ? Q.defer : void 0) instanceof Function)) {
+          return;
+        }
+        return Q.defer();
+      }
+      return this.deferCallback();
     };
 
     return ShipperEnvironmentObject;
@@ -684,7 +700,7 @@ limitations under the License.
           if (possiblePromise.progress instanceof Function) {
             return possiblePromise;
           }
-          deferred = Q.defer();
+          deferred = ShipperEnvironment.defer();
           possiblePromise.then(deferred.resolve).fail(deferred.reject);
           if (possiblePromise.progress instanceof Function) {
             possiblePromise.progress(deferred.notify);
@@ -10192,7 +10208,7 @@ limitations under the License.
       var e;
       this.requests = {};
       this.parameters = ShipperEnvironment.getWebSocketParameters();
-      this.deferred = Q.defer();
+      this.deferred = ShipperEnvironment.defer();
       this.promise = this.deferred.promise;
       try {
         this.socket = new WebSocket(this.parameters.url, this.parameters.protocol);
@@ -10253,7 +10269,7 @@ limitations under the License.
 
     SocketClient.prototype.sendRequest = function(module, protocol, command, payload) {
       var deferred, req;
-      deferred = Q.defer();
+      deferred = ShipperEnvironment.defer();
       req = new SocketRequest(module, protocol, command, payload, deferred);
       this.requests[req.id] = req;
       setTimeout(function() {

@@ -20,7 +20,7 @@ limitations under the License.
       var e;
       this.requests = {};
       this.parameters = ShipperEnvironment.getWebSocketParameters();
-      this.deferred = Q.defer();
+      this.deferred = ShipperEnvironment.defer();
       this.promise = this.deferred.promise;
       try {
         this.socket = new WebSocket(this.parameters.url, this.parameters.protocol);
@@ -81,7 +81,7 @@ limitations under the License.
 
     SocketClient.prototype.sendRequest = function(module, protocol, command, payload) {
       var deferred, req;
-      deferred = Q.defer();
+      deferred = ShipperEnvironment.defer();
       req = new SocketRequest(module, protocol, command, payload, deferred);
       this.requests[req.id] = req;
       setTimeout(function() {
