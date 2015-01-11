@@ -79,13 +79,13 @@ limitations under the License.
           return function(response) {
             return _this.response = response;
           };
-        })(this)).fail((function(_this) {
+        })(this))["catch"]((function(_this) {
           return function(error) {
             return _this.error = error;
           };
         })(this));
         this.then = this.promise.then.bind(this.promise);
-        this.fail = this.promise.fail.bind(this.promise);
+        this["catch"] = this.promise["catch"].bind(this.promise);
         this.progress = this.promise.progress.bind(this.promise);
       }
 
@@ -102,7 +102,7 @@ limitations under the License.
         var form, res;
         form = Command.validate(this.payload);
         if (!form.valid) {
-          return Q.reject(new ValidationError('Payload not valid', form.errors));
+          return ShipperEnvironment.reject(new ValidationError('Payload not valid', form.errors));
         }
         res = this.handler(form.data);
         return this.resolvePromise(res);
@@ -128,23 +128,20 @@ limitations under the License.
       Command.prototype.resolvePromise = function(possiblePromise) {
         var deferred;
         if (possiblePromise == null) {
-          return Q.resolve();
+          return ShipperEnvironment.resolve();
         }
-        if (possiblePromise.then instanceof Function && !(possiblePromise.fail instanceof Function) && possiblePromise["catch"] instanceof Function) {
-          possiblePromise.fail = possiblePromise["catch"];
-        }
-        if (possiblePromise.then instanceof Function && possiblePromise.fail instanceof Function) {
+        if (possiblePromise.then instanceof Function && possiblePromise["catch"] instanceof Function) {
           if (possiblePromise.progress instanceof Function) {
             return possiblePromise;
           }
           deferred = ShipperEnvironment.defer();
-          possiblePromise.then(deferred.resolve).fail(deferred.reject);
+          possiblePromise.then(deferred.resolve)["catch"](deferred.reject);
           if (possiblePromise.progress instanceof Function) {
             possiblePromise.progress(deferred.notify);
           }
           return deferred.promise;
         }
-        return Q.resolve(possiblePromise);
+        return ShipperEnvironment.resolve(possiblePromise);
       };
 
       return Command;

@@ -44,8 +44,30 @@ limitations under the License.
       };
     };
 
-    ShipperEnvironmentObject.prototype.setDefer = function(deferCallback) {
-      this.deferCallback = deferCallback;
+    ShipperEnvironmentObject.prototype.setPromiseLibrary = function(lib) {
+      this.deferCallback = lib.defer;
+      this.deferResolve = lib.resolve;
+      return this.deferReject = lib.reject;
+    };
+
+    ShipperEnvironmentObject.prototype.resolve = function() {
+      if (!(this.deferResolve instanceof Function)) {
+        if (!((typeof Q !== "undefined" && Q !== null ? Q.resolve : void 0) instanceof Function)) {
+          return;
+        }
+        return Q.resolve.apply(null, arguments);
+      }
+      return this.deferResolve.apply(null, arguments);
+    };
+
+    ShipperEnvironmentObject.prototype.reject = function() {
+      if (!(this.deferReject instanceof Function)) {
+        if (!((typeof Q !== "undefined" && Q !== null ? Q.reject : void 0) instanceof Function)) {
+          return;
+        }
+        return Q.reject.apply(null, arguments);
+      }
+      return this.deferReject.apply(null, arguments);
     };
 
     ShipperEnvironmentObject.prototype.defer = function() {

@@ -88,7 +88,7 @@ class SocketClient
 
   send: ( data ) ->
     if @closed
-      return Q.reject( 'Connection is closed' )
+      return ShipperEnvironment.reject( 'Connection is closed' )
     if typeof data isnt 'string'
       try
         data = JSON.stringify( data )

@@ -31,7 +31,24 @@ class ShipperEnvironmentObject
       timeout: 10000
     }
 
-  setDefer: ( @deferCallback ) ->
+  setPromiseLibrary: ( lib ) ->
+    @deferCallback = lib.defer
+    @deferResolve = lib.resolve
+    @deferReject = lib.reject
+
+  resolve: ->
+    unless @deferResolve instanceof Function
+      unless Q?.resolve instanceof Function
+        return
+      return Q.resolve.apply( null, arguments )
+    return @deferResolve.apply( null, arguments )
+
+  reject: ->
+    unless @deferReject instanceof Function
+      unless Q?.reject instanceof Function
+        return
+      return Q.reject.apply( null, arguments )
+    return @deferReject.apply( null, arguments )
 
   defer: ->
     unless @deferCallback instanceof Function

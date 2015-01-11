@@ -93,7 +93,7 @@ limitations under the License.
 
     SocketClient.prototype.send = function(data) {
       if (this.closed) {
-        return Q.reject('Connection is closed');
+        return ShipperEnvironment.reject('Connection is closed');
       }
       if (typeof data !== 'string') {
         try {

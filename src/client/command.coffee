@@ -67,12 +67,12 @@ defineShipperCommand = ( protocol, name, definition ) ->
       .then( ( response ) =>
         @response = response
       )
-      .fail( ( error ) =>
+      .catch( ( error ) =>
         @error = error
       )
 
       @then = @promise.then.bind( @promise )
-      @fail = @promise.fail.bind( @promise )
+      @catch = @promise.catch.bind( @promise )
       @progress = @promise.progress.bind( @promise )
 
     resolve: ->
@@ -85,7 +85,7 @@ defineShipperCommand = ( protocol, name, definition ) ->
       form = Command.validate( @payload )
 
       unless form.valid
-        return Q.reject(
+        return ShipperEnvironment.reject(
           new ValidationError(
             'Payload not valid',
             form.errors
@@ -110,18 +110,11 @@ defineShipperCommand = ( protocol, name, definition ) ->
 
     resolvePromise: ( possiblePromise ) ->
       unless possiblePromise?
-        return Q.resolve( )
+        return ShipperEnvironment.resolve( )
 
       if (
         possiblePromise.then instanceof Function and
-          possiblePromise.fail not instanceof Function and
           possiblePromise.catch instanceof Function
-      )
-        possiblePromise.fail = possiblePromise.catch
-
-      if (
-        possiblePromise.then instanceof Function and
-          possiblePromise.fail instanceof Function
       )
         unless possiblePromise.progress not instanceof Function
           return possiblePromise
@@ -130,7 +123,7 @@ defineShipperCommand = ( protocol, name, definition ) ->
         .then(
           deferred.resolve
         )
-        .fail(
+        .catch(
           deferred.reject
         )
         if possiblePromise.progress instanceof Function
@@ -139,7 +132,7 @@ defineShipperCommand = ( protocol, name, definition ) ->
           )
         return deferred.promise
 
-      return Q.resolve( possiblePromise )
+      return ShipperEnvironment.resolve( possiblePromise )
 
 
 

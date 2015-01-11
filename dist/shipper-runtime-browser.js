@@ -486,8 +486,30 @@ limitations under the License.
       };
     };
 
-    ShipperEnvironmentObject.prototype.setDefer = function(deferCallback) {
-      this.deferCallback = deferCallback;
+    ShipperEnvironmentObject.prototype.setPromiseLibrary = function(lib) {
+      this.deferCallback = lib.defer;
+      this.deferResolve = lib.resolve;
+      return this.deferReject = lib.reject;
+    };
+
+    ShipperEnvironmentObject.prototype.resolve = function() {
+      if (!(this.deferResolve instanceof Function)) {
+        if (!((typeof Q !== "undefined" && Q !== null ? Q.resolve : void 0) instanceof Function)) {
+          return;
+        }
+        return Q.resolve.apply(null, arguments);
+      }
+      return this.deferResolve.apply(null, arguments);
+    };
+
+    ShipperEnvironmentObject.prototype.reject = function() {
+      if (!(this.deferReject instanceof Function)) {
+        if (!((typeof Q !== "undefined" && Q !== null ? Q.reject : void 0) instanceof Function)) {
+          return;
+        }
+        return Q.reject.apply(null, arguments);
+      }
+      return this.deferReject.apply(null, arguments);
     };
 
     ShipperEnvironmentObject.prototype.defer = function() {
@@ -642,13 +664,13 @@ limitations under the License.
           return function(response) {
             return _this.response = response;
           };
-        })(this)).fail((function(_this) {
+        })(this))["catch"]((function(_this) {
           return function(error) {
             return _this.error = error;
           };
         })(this));
         this.then = this.promise.then.bind(this.promise);
-        this.fail = this.promise.fail.bind(this.promise);
+        this["catch"] = this.promise["catch"].bind(this.promise);
         this.progress = this.promise.progress.bind(this.promise);
       }
 
@@ -665,7 +687,7 @@ limitations under the License.
         var form, res;
         form = Command.validate(this.payload);
         if (!form.valid) {
-          return Q.reject(new ValidationError('Payload not valid', form.errors));
+          return ShipperEnvironment.reject(new ValidationError('Payload not valid', form.errors));
         }
         res = this.handler(form.data);
         return this.resolvePromise(res);
@@ -691,23 +713,20 @@ limitations under the License.
       Command.prototype.resolvePromise = function(possiblePromise) {
         var deferred;
         if (possiblePromise == null) {
-          return Q.resolve();
+          return ShipperEnvironment.resolve();
         }
-        if (possiblePromise.then instanceof Function && !(possiblePromise.fail instanceof Function) && possiblePromise["catch"] instanceof Function) {
-          possiblePromise.fail = possiblePromise["catch"];
-        }
-        if (possiblePromise.then instanceof Function && possiblePromise.fail instanceof Function) {
+        if (possiblePromise.then instanceof Function && possiblePromise["catch"] instanceof Function) {
           if (possiblePromise.progress instanceof Function) {
             return possiblePromise;
           }
           deferred = ShipperEnvironment.defer();
-          possiblePromise.then(deferred.resolve).fail(deferred.reject);
+          possiblePromise.then(deferred.resolve)["catch"](deferred.reject);
           if (possiblePromise.progress instanceof Function) {
             possiblePromise.progress(deferred.notify);
           }
           return deferred.promise;
         }
-        return Q.resolve(possiblePromise);
+        return ShipperEnvironment.resolve(possiblePromise);
       };
 
       return Command;
@@ -10281,7 +10300,7 @@ limitations under the License.
 
     SocketClient.prototype.send = function(data) {
       if (this.closed) {
-        return Q.reject('Connection is closed');
+        return ShipperEnvironment.reject('Connection is closed');
       }
       if (typeof data !== 'string') {
         try {
