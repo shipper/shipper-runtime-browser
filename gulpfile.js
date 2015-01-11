@@ -40,7 +40,7 @@ gulp.task('inject', [ 'clean' ], function(){
 
 gulp.task('join', [ 'coffee', 'inject' ], function(){
     return gulp.src( path.join( 'dist', 'build', '**', '*.js' ))
-        .pipe( concat( 'bundle.js') )
+        .pipe( concat( 'shipper-runtime-browser.js') )
         .pipe( gulp.dest( 'dist' ) )
 });
 
