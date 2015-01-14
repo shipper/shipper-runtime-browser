@@ -51,12 +51,12 @@ class ShipperClient
 
 shipperClientInstance = undefined
 
-window.newShipperClient = ->
+this.newShipperClient = ->
   unless ShipperEnvironment.hasProtocolDefinition( )
     throw new Error( "No definition implemented" )
   return shipperClientInstance = new ShipperClient( ShipperEnvironment.getProtocolDefinition( ) )
 
-window.getShipperClient = ->
+this.getShipperClient = ->
   if shipperClientInstance?
     return shipperClientInstance
   return shipperClientInstance = newShipperClient( )

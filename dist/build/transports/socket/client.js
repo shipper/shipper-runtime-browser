@@ -111,6 +111,6 @@ limitations under the License.
 
   })();
 
-  window.SocketClient = SocketClient;
+  this.SocketClient = SocketClient;
 
 }).call(this);

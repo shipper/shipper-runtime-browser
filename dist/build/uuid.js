@@ -26,6 +26,6 @@ limitations under the License.
     }
   };
 
-  window.uuid = uuid;
+  this.uuid = uuid;
 
 }).call(this);

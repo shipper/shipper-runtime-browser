@@ -71,6 +71,6 @@ limitations under the License.
 
   })();
 
-  window.ShipperModule = ShipperModule;
+  this.ShipperModule = ShipperModule;
 
 }).call(this);

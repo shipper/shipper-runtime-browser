@@ -10,13 +10,26 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-uuid = {
-  v4: ->
-    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, ( c ) ->
-      r = Math.random( ) * 16 | 0
-      v = (if c is "x" then r else (r & 0x3 | 0x8))
-      return v.toString( 16 )
-    )
-}
+class TypeCache
+  $$types: undefined
+  constructor: ->
+    @$$types = { }
 
-this.uuid = uuid
+  addType: ( name, type ) ->
+    @$$types[ name ] = type
+
+  getType: ( name, schema = undefined ) ->
+    type = @$$types[ name ]
+    if type?
+      return type
+    type = @generateType( name, schema )
+    @addType( name, type )
+    return type
+
+  generateType: ( name, schema = undefined ) ->
+    return TypeGenerator.generate( name, schema )
+
+instance = new TypeCache()
+instance.TypeCache = TypeCache
+
+this.TypeCache = instance

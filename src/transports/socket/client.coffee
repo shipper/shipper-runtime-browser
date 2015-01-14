@@ -97,4 +97,4 @@ class SocketClient
       @socket.send( data )
     )
 
-window.SocketClient = SocketClient
+this.SocketClient = SocketClient

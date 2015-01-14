@@ -10,13 +10,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-uuid = {
-  v4: ->
-    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, ( c ) ->
-      r = Math.random( ) * 16 | 0
-      v = (if c is "x" then r else (r & 0x3 | 0x8))
-      return v.toString( 16 )
-    )
-}
+class ValidationError extends Error
+  constructor: ( @message, @errors = undefined ) ->
+    super( message )
 
-this.uuid = uuid
+  toString: ->
+    res = "ValidationError: #{ @message }"
+    unless @errors
+      return res
+    for k, v of @errors
+      unless @errors.hasOwnProperty( k )
+        continue
+      res += "\n\tError: #{ v }"
+    return res
+
+this.ValidationError = ValidationError

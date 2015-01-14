@@ -150,6 +150,6 @@ limitations under the License.
     return Command;
   };
 
-  window.defineShipperCommand = defineShipperCommand;
+  this.defineShipperCommand = defineShipperCommand;
 
 }).call(this);

@@ -25,4 +25,4 @@ class SocketRequest
       }
     }
 
-window.SocketRequest = SocketRequest
+this.SocketRequest = SocketRequest
