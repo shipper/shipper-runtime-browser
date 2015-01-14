@@ -45,4 +45,4 @@ class ShipperProtocol
   $send: ( command, payload ) ->
     return @module.$send( @name, command, payload )
 
-window.ShipperProtocol = ShipperProtocol
+this.ShipperProtocol = ShipperProtocol

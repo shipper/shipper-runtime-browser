@@ -65,6 +65,6 @@ limitations under the License.
 
   })();
 
-  window.ShipperProtocol = ShipperProtocol;
+  this.ShipperProtocol = ShipperProtocol;
 
 }).call(this);

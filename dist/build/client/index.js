@@ -78,14 +78,14 @@ limitations under the License.
 
   shipperClientInstance = void 0;
 
-  window.newShipperClient = function() {
+  this.newShipperClient = function() {
     if (!ShipperEnvironment.hasProtocolDefinition()) {
       throw new Error("No definition implemented");
     }
     return shipperClientInstance = new ShipperClient(ShipperEnvironment.getProtocolDefinition());
   };
 
-  window.getShipperClient = function() {
+  this.getShipperClient = function() {
     if (shipperClientInstance != null) {
       return shipperClientInstance;
     }

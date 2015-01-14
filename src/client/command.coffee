@@ -138,5 +138,4 @@ defineShipperCommand = ( protocol, name, definition ) ->
 
   return Command
 
-
-window.defineShipperCommand = defineShipperCommand
+this.defineShipperCommand = defineShipperCommand

@@ -13,7 +13,7 @@ limitations under the License.
  */
 
 (function() {
-  window.ShipperClientDefinition = {
+  this.ShipperClientDefinition = {
     "modules": {
       "authentication": {
         "agent": {

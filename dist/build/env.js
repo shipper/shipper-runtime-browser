@@ -84,6 +84,6 @@ limitations under the License.
 
   })();
 
-  window.ShipperEnvironment = new ShipperEnvironmentObject();
+  this.ShipperEnvironment = new ShipperEnvironmentObject();
 
 }).call(this);

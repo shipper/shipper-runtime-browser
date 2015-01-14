@@ -13,7 +13,7 @@ limitations under the License.
  */
 
 (function() {
-  window.ShipperClientDefinition = {
+  this.ShipperClientDefinition = {
     "modules": {
       "authentication": {
         "agent": {
@@ -526,7 +526,7 @@ limitations under the License.
 
   })();
 
-  window.ShipperEnvironment = new ShipperEnvironmentObject();
+  this.ShipperEnvironment = new ShipperEnvironmentObject();
 
 }).call(this);
 
@@ -579,7 +579,7 @@ limitations under the License.
     }
   };
 
-  window.uuid = uuid;
+  this.uuid = uuid;
 
 }).call(this);
 
@@ -735,7 +735,7 @@ limitations under the License.
     return Command;
   };
 
-  window.defineShipperCommand = defineShipperCommand;
+  this.defineShipperCommand = defineShipperCommand;
 
 }).call(this);
 
@@ -819,14 +819,14 @@ limitations under the License.
 
   shipperClientInstance = void 0;
 
-  window.newShipperClient = function() {
+  this.newShipperClient = function() {
     if (!ShipperEnvironment.hasProtocolDefinition()) {
       throw new Error("No definition implemented");
     }
     return shipperClientInstance = new ShipperClient(ShipperEnvironment.getProtocolDefinition());
   };
 
-  window.getShipperClient = function() {
+  this.getShipperClient = function() {
     if (shipperClientInstance != null) {
       return shipperClientInstance;
     }
@@ -908,7 +908,7 @@ limitations under the License.
 
   })();
 
-  window.ShipperModule = ShipperModule;
+  this.ShipperModule = ShipperModule;
 
 }).call(this);
 
@@ -979,7 +979,7 @@ limitations under the License.
 
   })();
 
-  window.ShipperProtocol = ShipperProtocol;
+  this.ShipperProtocol = ShipperProtocol;
 
 }).call(this);
 
@@ -10220,6 +10220,154 @@ limitations under the License.
  */
 
 (function() {
+  var ValidationError,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  ValidationError = (function(_super) {
+    __extends(ValidationError, _super);
+
+    function ValidationError(message, errors) {
+      this.message = message;
+      this.errors = errors != null ? errors : void 0;
+      ValidationError.__super__.constructor.call(this, message);
+    }
+
+    ValidationError.prototype.toString = function() {
+      var k, res, v, _ref;
+      res = "ValidationError: " + this.message;
+      if (!this.errors) {
+        return res;
+      }
+      _ref = this.errors;
+      for (k in _ref) {
+        v = _ref[k];
+        if (!this.errors.hasOwnProperty(k)) {
+          continue;
+        }
+        res += "\n\tError: " + v;
+      }
+      return res;
+    };
+
+    return ValidationError;
+
+  })(Error);
+
+  this.ValidationError = ValidationError;
+
+}).call(this);
+
+(function() {
+  var TypeCache, instance;
+
+  TypeCache = (function() {
+    TypeCache.prototype.$$types = void 0;
+
+    function TypeCache() {
+      this.$$types = {};
+    }
+
+    TypeCache.prototype.addType = function(name, type) {
+      return this.$$types[name] = type;
+    };
+
+    TypeCache.prototype.getType = function(name, schema) {
+      var type;
+      if (schema == null) {
+        schema = void 0;
+      }
+      type = this.$$types[name];
+      if (type != null) {
+        return type;
+      }
+      type = this.generateType(name, schema);
+      this.addType(name, type);
+      return type;
+    };
+
+    TypeCache.prototype.generateType = function(name, schema) {
+      if (schema == null) {
+        schema = void 0;
+      }
+      return TypeGenerator.generate(name, schema);
+    };
+
+    return TypeCache;
+
+  })();
+
+  instance = new TypeCache();
+
+  instance.TypeCache = TypeCache;
+
+  this.TypeCache = instance;
+
+}).call(this);
+
+(function() {
+  var TypeGenerator, instance;
+
+  TypeGenerator = (function() {
+    function TypeGenerator() {}
+
+    TypeGenerator.prototype.generate = function(name) {
+      var cls, func;
+      this.$validateFunctionName(name);
+      func = new Function("return function " + name + " ( ) {\n  if ( !( this instanceof " + name + " ) ) {\n    return new " + name + " ( );\n  }\n}");
+      cls = func();
+      this.$extend(name, cls);
+      return cls;
+    };
+
+    TypeGenerator.prototype.$extend = function(name, cls) {
+      var proto;
+      proto = cls.prototype;
+      return proto.toString = function() {
+        return "[object " + name + "]";
+      };
+    };
+
+    TypeGenerator.prototype.$validateFunctionName = function(name) {
+      if (name == null) {
+        throw new Error('Name required');
+      }
+      if (!/^[A-Z0-9]+$/i.test(name)) {
+        throw new Error('Name contains invalid characters');
+      }
+      if (!/^[A-Z]$/i.test(name[0])) {
+        throw new Error('First letter of Name must be a alpha character');
+      }
+      return true;
+    };
+
+    return TypeGenerator;
+
+  })();
+
+  instance = new TypeGenerator();
+
+  instance.TypeGenerator = TypeGenerator;
+
+  this.TypeGenerator = instance;
+
+}).call(this);
+
+
+/**
+Copyright 2014 Fabian Cook
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
+
+(function() {
   var SocketClient;
 
   SocketClient = (function() {
@@ -10318,7 +10466,7 @@ limitations under the License.
 
   })();
 
-  window.SocketClient = SocketClient;
+  this.SocketClient = SocketClient;
 
 }).call(this);
 
@@ -10365,6 +10513,6 @@ limitations under the License.
 
   })();
 
-  window.SocketRequest = SocketRequest;
+  this.SocketRequest = SocketRequest;
 
 }).call(this);

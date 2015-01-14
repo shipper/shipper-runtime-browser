@@ -41,6 +41,6 @@ limitations under the License.
 
   })();
 
-  window.SocketRequest = SocketRequest;
+  this.SocketRequest = SocketRequest;
 
 }).call(this);

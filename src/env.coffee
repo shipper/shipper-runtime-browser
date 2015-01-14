@@ -57,4 +57,4 @@ class ShipperEnvironmentObject
       return Q.defer( )
     return @deferCallback( )
 
-window.ShipperEnvironment = new ShipperEnvironmentObject( )
+this.ShipperEnvironment = new ShipperEnvironmentObject( )

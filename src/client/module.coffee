@@ -45,4 +45,4 @@ class ShipperModule
     return @client.$send( @name, protocol, command, payload )
 
 
-window.ShipperModule = ShipperModule
+this.ShipperModule = ShipperModule
