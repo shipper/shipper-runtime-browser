@@ -134,8 +134,6 @@ defineShipperCommand = ( protocol, name, definition ) ->
 
       return ShipperEnvironment.resolve( possiblePromise )
 
-
-
   return Command
 
 this.defineShipperCommand = defineShipperCommand

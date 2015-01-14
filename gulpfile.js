@@ -35,11 +35,23 @@ gulp.task('coffee', [ 'make' ], function(){
 
 gulp.task('inject', [ 'clean' ], function(){
     return gulp.src( inject.scripts )
-        .pipe( gulp.dest( path.join( 'dist', 'build', 'lib' ) ))
+        .pipe( gulp.dest( path.join( 'dist', 'lib' ) ))
 });
 
-gulp.task('join', [ 'coffee', 'inject' ], function(){
+gulp.task('join:lib', [ 'coffee', 'inject' ], function(){
+    return gulp.src( path.join( 'dist', 'lib', '**', '*.js' ))
+        .pipe( concat( 'shipper-runtime-lib-browser.js') )
+        .pipe( gulp.dest( 'dist' ) )
+});
+
+gulp.task('join:src', [ 'coffee', 'inject' ], function(){
     return gulp.src( path.join( 'dist', 'build', '**', '*.js' ))
+        .pipe( concat( 'shipper-runtime-src-browser.js') )
+        .pipe( gulp.dest( 'dist' ) )
+});
+
+gulp.task('join', [ 'join:src', 'join:lib' ], function(){
+    return gulp.src( path.join( 'dist', '*.js' ))
         .pipe( concat( 'shipper-runtime-browser.js') )
         .pipe( gulp.dest( 'dist' ) )
 });

@@ -10,10 +10,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-class ShipperClient
-  constructor: ( @definition ) ->
-    @$$defineModules( )
+class ShipperClient extends EventEmitter
+  constructor: ( definition ) ->
+    @$onLink( definition )
     @client = new SocketClient( )
+    @client.once( 'capabilities', @$receiveCapabilities.bind( @ ) )
+    @client.once( 'close', =>
+      @emit( 'close' )
+    )
 
   $$defineModules: ->
     @$$modules = { }
@@ -49,11 +53,37 @@ class ShipperClient
   $send: ( module, protocol, command, payload ) ->
     return @client.sendRequest( module, protocol, command, payload )
 
+  $receiveCapabilities: ( capabilities ) ->
+    if capabilities.link
+      @$send( 'protocol', 'link', 'generate', { } )
+      .then( @$onLink.bind( @ ) )
+
+  $onLink: ( definition = undefined ) ->
+    unless definition?
+      return
+    @definition = definition
+    @$$defineModules( )
+    @emit( 'link', @ )
+
+  $module: ( name ) ->
+    deferred = ShipperEnvironment.defer()
+    @ready( =>
+      unless @$$modules[ name.toLowerCase( ) ]?
+        return deferred.reject( "No module #{ name }")
+      return deferred.resolve( @$$modules[ name.toLowerCase( ) ].value )
+    )
+    return deferred.promise
+
+  ready: ( callback ) ->
+    if @definition
+      return callback( @ )
+    @once( 'link', =>
+      callback( @ )
+    )
+
 shipperClientInstance = undefined
 
 this.newShipperClient = ->
-  unless ShipperEnvironment.hasProtocolDefinition( )
-    throw new Error( "No definition implemented" )
   return shipperClientInstance = new ShipperClient( ShipperEnvironment.getProtocolDefinition( ) )
 
 this.getShipperClient = ->

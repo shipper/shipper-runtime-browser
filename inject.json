@@ -2,6 +2,7 @@
   "scripts": [
     "./node_modules/schemajs/dist/schema-browser.js",
     "./bower_components/q/q.js",
-    "./bower_components/lodash/dist/lodash.js"
+    "./bower_components/lodash/dist/lodash.js",
+    "./bower_components/eventEmitter/EventEmitter.js"
   ]
 }

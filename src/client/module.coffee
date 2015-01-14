@@ -44,5 +44,4 @@ class ShipperModule
   $send: ( protocol, command, payload ) ->
     return @client.$send( @name, protocol, command, payload )
 
-
 this.ShipperModule = ShipperModule

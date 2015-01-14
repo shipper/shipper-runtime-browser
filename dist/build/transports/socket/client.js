@@ -13,9 +13,13 @@ limitations under the License.
  */
 
 (function() {
-  var SocketClient;
+  var SocketClient,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  SocketClient = (function() {
+  SocketClient = (function(_super) {
+    __extends(SocketClient, _super);
+
     function SocketClient() {
       var e;
       this.requests = {};
@@ -28,12 +32,14 @@ limitations under the License.
         this.socket.error = this.error.bind(this);
         this.socket.onopen = (function(_this) {
           return function() {
-            return _this.deferred.resolve(_this.socket);
+            _this.deferred.resolve(_this.socket);
+            return _this.emit('open');
           };
         })(this);
         this.socket.onclose = (function(_this) {
           return function() {
-            return _this.closed = true;
+            _this.closed = true;
+            return _this.emit('close');
           };
         })(this);
       } catch (_error) {
@@ -56,17 +62,28 @@ limitations under the License.
     };
 
     SocketClient.prototype.receive = function(message) {
-      var json, req, _ref;
+      var json, _ref;
       try {
         json = JSON.parse(message.data);
       } catch (_error) {}
-      if (!json) {
+      if (json == null) {
         return;
       }
-      if ((json != null ? (_ref = json.metadata) != null ? _ref.id : void 0 : void 0) == null) {
-        return;
+      if (((_ref = json.metadata) != null ? _ref.id : void 0) != null) {
+        return this.receiveWithId(json.metadata.id, json);
       }
-      req = this.requests[json.metadata.id];
+      if (json.command === 'capabilities' && (json.payload != null)) {
+        return this.receiveCapabilities(json.payload);
+      }
+    };
+
+    SocketClient.prototype.receiveCapabilities = function(payload) {
+      return this.emit('capabilities', payload);
+    };
+
+    SocketClient.prototype.receiveWithId = function(id, json) {
+      var req;
+      req = this.requests[id];
       if (req == null) {
         return;
       }
@@ -109,7 +126,7 @@ limitations under the License.
 
     return SocketClient;
 
-  })();
+  })(EventEmitter);
 
   this.SocketClient = SocketClient;
 

@@ -13,13 +13,28 @@ limitations under the License.
  */
 
 (function() {
-  this.ShipperClientDefinition = {
+  this.ShipperClientDefinitiontemp = {
     "modules": {
       "authentication": {
         "agent": {
           "login": {
             "name": "login",
             "route": ["/agent/login/:username", "/agent/login"],
+            "method": ["PUT", "POST"],
+            "schema": {
+              "username": {
+                "type": "string",
+                "required": true
+              },
+              "password": {
+                "type": "string",
+                "required": true
+              }
+            }
+          },
+          "loginToken": {
+            "name": "loginToken",
+            "route": ["/agent/login/token/:token", "/agent/login/token"],
             "method": ["PUT", "POST"],
             "schema": {
               "username": {

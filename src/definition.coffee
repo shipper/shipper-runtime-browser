@@ -10,7 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-this.ShipperClientDefinition = {
+this.ShipperClientDefinitiontemp = {
   "modules": {
     "authentication": {
       "agent": {
@@ -19,6 +19,27 @@ this.ShipperClientDefinition = {
           "route": [
             "/agent/login/:username",
             "/agent/login"
+          ],
+          "method": [
+            "PUT",
+            "POST"
+          ],
+          "schema": {
+            "username": {
+              "type": "string",
+              "required": true
+            },
+            "password": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "loginToken": {
+          "name": "loginToken",
+          "route": [
+            "/agent/login/token/:token",
+            "/agent/login/token"
           ],
           "method": [
             "PUT",

@@ -10,7 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ###
-class SocketClient
+class SocketClient extends EventEmitter
   constructor: ->
     @requests = { }
     @parameters = ShipperEnvironment.getWebSocketParameters( )
@@ -28,9 +28,12 @@ class SocketClient
 
       @socket.onopen = =>
         @deferred.resolve( @socket )
+        @emit( 'open' )
 
       @socket.onclose = =>
         @closed = yes
+        @emit( 'close' )
+
     catch e
       @deferred.reject( e )
 
@@ -47,13 +50,21 @@ class SocketClient
     try
       json = JSON.parse( message.data )
 
-    unless json
+    unless json?
       return
 
-    unless json?.metadata?.id?
-      return
+    if json.metadata?.id?
+      return @receiveWithId( json.metadata.id, json )
 
-    req = @requests[ json.metadata.id ]
+    if json.command is 'capabilities' and json.payload?
+      return @receiveCapabilities( json.payload )
+
+  receiveCapabilities: ( payload ) ->
+    @emit( 'capabilities', payload )
+
+  receiveWithId: ( id, json ) ->
+
+    req = @requests[ id ]
 
     unless req?
       return
@@ -64,6 +75,7 @@ class SocketClient
       req.deferred.notify( json.payload )
     else
       req.deferred.resolve( json.payload )
+
 
 
   sendRequest: ( module, protocol, command, payload ) ->

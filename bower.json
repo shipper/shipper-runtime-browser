@@ -1,6 +1,6 @@
 {
   "name": "shipper-runtime-browser",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "authors": [
     "Fabian Cook <fabian.cook@joukou.com>"
   ],
@@ -22,5 +22,8 @@
     "q": "1.0.1",
     "lodash": "~2.4.1",
     "validator-js": "~3.27.0"
+  },
+  "dependencies": {
+    "eventEmitter": "~4.2.11"
   }
 }
