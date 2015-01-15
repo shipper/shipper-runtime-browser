@@ -16,7 +16,24 @@ class TypeCache
     @$$types = { }
 
   addType: ( name, type ) ->
+    oldType = @$$types[ name ]
     @$$types[ name ] = type
+
+    unless @window
+      return
+
+    if typeof @window is 'boolean'
+      @window = window
+
+    if oldType?
+      unless @window[ name ] is oldType
+        return
+      @window[ name ] = undefined
+
+    if @window[ name ]?
+      return
+
+    @window[ name ] = type
 
   getType: ( name, schema = undefined ) ->
     type = @$$types[ name ]

@@ -58,11 +58,46 @@ defineShipperCommand = ( protocol, name, definition ) ->
 
       return Command.validate( payload )
 
+    @setTypes: ( obj ) ->
+
+      unless obj?
+        return obj
+      unless obj instanceof Object
+        return obj
+
+      if obj instanceof Array
+        ret = [ ]
+        for val in obj
+          ret.push(
+            Command.setTypes( val )
+          )
+        return ret
+
+      if obj._metadata?.name?
+        type = TypeCache.getType( obj._metadata.name )
+        ret = new type( )
+        _.assign( ret, obj )
+        obj = ret
+      else
+        ret = { }
+
+      for k, v of obj
+        unless obj.hasOwnProperty( k )
+          continue
+        ret[ k ] = Command.setTypes( v )
+
+      return ret
+
     constructor: ( @payload ) ->
       if @ not instanceof Command
         return new Command( @payload )
 
       @promise = @resolve( @payload )
+      .then( ( response ) ->
+        return Command.setTypes( response )
+      )
+
+
       @promise
       .then( ( response ) =>
         @response = response

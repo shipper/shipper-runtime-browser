@@ -69,12 +69,48 @@ limitations under the License.
         return Command.validate(payload);
       };
 
+      Command.setTypes = function(obj) {
+        var k, ret, type, v, val, _i, _len, _ref;
+        if (obj == null) {
+          return obj;
+        }
+        if (!(obj instanceof Object)) {
+          return obj;
+        }
+        if (obj instanceof Array) {
+          ret = [];
+          for (_i = 0, _len = obj.length; _i < _len; _i++) {
+            val = obj[_i];
+            ret.push(Command.setTypes(val));
+          }
+          return ret;
+        }
+        if (((_ref = obj._metadata) != null ? _ref.name : void 0) != null) {
+          type = TypeCache.getType(obj._metadata.name);
+          ret = new type();
+          _.assign(ret, obj);
+          obj = ret;
+        } else {
+          ret = {};
+        }
+        for (k in obj) {
+          v = obj[k];
+          if (!obj.hasOwnProperty(k)) {
+            continue;
+          }
+          ret[k] = Command.setTypes(v);
+        }
+        return ret;
+      };
+
       function Command(payload) {
         this.payload = payload;
         if (!(this instanceof Command)) {
           return new Command(this.payload);
         }
-        this.promise = this.resolve(this.payload);
+        this.promise = this.resolve(this.payload).then(function(response) {
+          return Command.setTypes(response);
+        });
         this.promise.then((function(_this) {
           return function(response) {
             return _this.response = response;

@@ -32,7 +32,6 @@ class TypeGenerator
     proto.toString = ->
       return "[object #{ name }]"
 
-
   $validateFunctionName: ( name ) ->
     unless name?
       throw new Error( 'Name required' )

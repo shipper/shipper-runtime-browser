@@ -23,7 +23,25 @@ limitations under the License.
     }
 
     TypeCache.prototype.addType = function(name, type) {
-      return this.$$types[name] = type;
+      var oldType;
+      oldType = this.$$types[name];
+      this.$$types[name] = type;
+      if (!this.window) {
+        return;
+      }
+      if (typeof this.window === 'boolean') {
+        this.window = window;
+      }
+      if (oldType != null) {
+        if (this.window[name] !== oldType) {
+          return;
+        }
+        this.window[name] = void 0;
+      }
+      if (this.window[name] != null) {
+        return;
+      }
+      return this.window[name] = type;
     };
 
     TypeCache.prototype.getType = function(name, schema) {
