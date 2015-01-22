@@ -62,6 +62,7 @@ defineShipperCommand = ( protocol, name, definition ) ->
 
       unless obj?
         return obj
+
       unless obj instanceof Object
         return obj
 
@@ -72,6 +73,9 @@ defineShipperCommand = ( protocol, name, definition ) ->
             Command.setTypes( val )
           )
         return ret
+
+      unless _.isPlainObject( obj )
+        return obj
 
       if obj._metadata?.name?
         type = TypeCache.getType( obj._metadata.name )

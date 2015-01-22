@@ -21,6 +21,7 @@ class SocketClient extends EventEmitter
         @parameters.url,
         @parameters.protocol
       )
+      @socket.binaryType = 'arraybuffer'
 
       @socket.onmessage = @receive.bind( @ )
 
@@ -47,36 +48,40 @@ class SocketClient extends EventEmitter
     console.log( error )
 
   receive: ( message ) ->
-    try
-      json = JSON.parse( message.data )
 
-    unless json?
+    if typeof message.data is 'string'
+      data = JSON.parse( message.data )
+    else if message.data instanceof ArrayBuffer
+      array = new Uint8Array( message.data )
+      data = BSON.deserialize( array )
+    else
+      data = BSON.deserialize( message.data )
+
+    unless data?
       return
 
-    if json.metadata?.id?
-      return @receiveWithId( json.metadata.id, json )
+    if data.metadata?.id?
+      return @receiveWithId( data.metadata.id, data )
 
-    if json.command is 'capabilities' and json.payload?
-      return @receiveCapabilities( json.payload )
+    if data.command is 'capabilities' and data.payload?
+      return @receiveCapabilities( data.payload )
 
   receiveCapabilities: ( payload ) ->
     @emit( 'capabilities', payload )
 
-  receiveWithId: ( id, json ) ->
+  receiveWithId: ( id, data ) ->
 
     req = @requests[ id ]
 
     unless req?
       return
 
-    if json.error
-      req.deferred.reject( json.error )
-    else if json.notify
-      req.deferred.notify( json.payload )
+    if data.error
+      req.deferred.reject( data.error )
+    else if data.notify
+      req.deferred.notify( data.payload )
     else
-      req.deferred.resolve( json.payload )
-
-
+      req.deferred.resolve( data.payload )
 
   sendRequest: ( module, protocol, command, payload ) ->
     deferred = ShipperEnvironment.defer()
@@ -103,7 +108,9 @@ class SocketClient extends EventEmitter
       return ShipperEnvironment.reject( 'Connection is closed' )
     if typeof data isnt 'string'
       try
-        data = JSON.stringify( data )
+        if data.toJSON?
+          data = data.toJSON( )
+        data = BSON.serialize( data )
     @promise
     .then( =>
       @socket.send( data )

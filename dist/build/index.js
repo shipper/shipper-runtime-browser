@@ -14,7 +14,8 @@ limitations under the License.
 
 (function() {
   document.addEventListener("DOMContentLoaded", function() {
-    return window.schemajs = window.schema;
+    window.schemajs = window.schema;
+    return window.BSON = bson().BSON;
   });
 
 }).call(this);

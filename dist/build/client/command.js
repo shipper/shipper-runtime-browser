@@ -85,6 +85,9 @@ limitations under the License.
           }
           return ret;
         }
+        if (!_.isPlainObject(obj)) {
+          return obj;
+        }
         if (((_ref = obj._metadata) != null ? _ref.name : void 0) != null) {
           type = TypeCache.getType(obj._metadata.name);
           ret = new type();

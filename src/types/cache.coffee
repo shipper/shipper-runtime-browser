@@ -43,6 +43,19 @@ class TypeCache
     @addType( name, type )
     return type
 
+  getInstance: ( name, id, schema = undefined ) ->
+    type = @getType( name, schema )
+    unless id?
+      return new type( )
+
+    instance = ( type.$$instances ?= { } )[ id ]
+    if instance
+      return instance
+
+    instance = new type( )
+    type.$$instances[ id ] = instance
+    return instance
+
   generateType: ( name, schema = undefined ) ->
     return TypeGenerator.generate( name, schema )
 

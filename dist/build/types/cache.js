@@ -58,6 +58,24 @@ limitations under the License.
       return type;
     };
 
+    TypeCache.prototype.getInstance = function(name, id, schema) {
+      var instance, type;
+      if (schema == null) {
+        schema = void 0;
+      }
+      type = this.getType(name, schema);
+      if (id == null) {
+        return new type();
+      }
+      instance = (type.$$instances != null ? type.$$instances : type.$$instances = {})[id];
+      if (instance) {
+        return instance;
+      }
+      instance = new type();
+      type.$$instances[id] = instance;
+      return instance;
+    };
+
     TypeCache.prototype.generateType = function(name, schema) {
       if (schema == null) {
         schema = void 0;

@@ -12,4 +12,5 @@ limitations under the License.
 ###
 document.addEventListener( "DOMContentLoaded", ->
   window.schemajs = window.schema
+  window.BSON = bson().BSON
 )

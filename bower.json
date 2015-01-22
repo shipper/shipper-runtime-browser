@@ -22,6 +22,7 @@
     "q": "1.0.1",
     "lodash": "~2.4.1",
     "validator-js": "~3.27.0",
-    "eventEmitter": "~4.2.11"
+    "eventEmitter": "~4.2.11",
+    "bson": "git@github.com:mongodb/js-bson.git"
   }
 }

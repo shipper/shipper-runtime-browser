@@ -28,6 +28,7 @@ limitations under the License.
       this.promise = this.deferred.promise;
       try {
         this.socket = new WebSocket(this.parameters.url, this.parameters.protocol);
+        this.socket.binaryType = 'arraybuffer';
         this.socket.onmessage = this.receive.bind(this);
         this.socket.error = this.error.bind(this);
         this.socket.onopen = (function(_this) {
@@ -62,18 +63,23 @@ limitations under the License.
     };
 
     SocketClient.prototype.receive = function(message) {
-      var json, _ref;
-      try {
-        json = JSON.parse(message.data);
-      } catch (_error) {}
-      if (json == null) {
+      var array, data, _ref;
+      if (typeof message.data === 'string') {
+        data = JSON.parse(message.data);
+      } else if (message.data instanceof ArrayBuffer) {
+        array = new Uint8Array(message.data);
+        data = BSON.deserialize(array);
+      } else {
+        data = BSON.deserialize(message.data);
+      }
+      if (data == null) {
         return;
       }
-      if (((_ref = json.metadata) != null ? _ref.id : void 0) != null) {
-        return this.receiveWithId(json.metadata.id, json);
+      if (((_ref = data.metadata) != null ? _ref.id : void 0) != null) {
+        return this.receiveWithId(data.metadata.id, data);
       }
-      if (json.command === 'capabilities' && (json.payload != null)) {
-        return this.receiveCapabilities(json.payload);
+      if (data.command === 'capabilities' && (data.payload != null)) {
+        return this.receiveCapabilities(data.payload);
       }
     };
 
@@ -81,18 +87,18 @@ limitations under the License.
       return this.emit('capabilities', payload);
     };
 
-    SocketClient.prototype.receiveWithId = function(id, json) {
+    SocketClient.prototype.receiveWithId = function(id, data) {
       var req;
       req = this.requests[id];
       if (req == null) {
         return;
       }
-      if (json.error) {
-        return req.deferred.reject(json.error);
-      } else if (json.notify) {
-        return req.deferred.notify(json.payload);
+      if (data.error) {
+        return req.deferred.reject(data.error);
+      } else if (data.notify) {
+        return req.deferred.notify(data.payload);
       } else {
-        return req.deferred.resolve(json.payload);
+        return req.deferred.resolve(data.payload);
       }
     };
 
@@ -114,7 +120,10 @@ limitations under the License.
       }
       if (typeof data !== 'string') {
         try {
-          data = JSON.stringify(data);
+          if (data.toJSON != null) {
+            data = data.toJSON();
+          }
+          data = BSON.serialize(data);
         } catch (_error) {}
       }
       return this.promise.then((function(_this) {
